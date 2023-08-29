@@ -2,6 +2,30 @@
   background-color: blueviolet;
 }
 
+.user-img {
+  width: 50px;
+  border-radius: 25px;
+}
+
+.logout {
+  background-color: white;
+  font-weight: 500;
+  border-radius: 4px;
+  border: none;
+}
+
+.logout:hover{
+  background-color: rgb(11, 55, 91);
+  color: #fff;
+}
+.bg-light {
+  background-color: white !important;
+}
+
+.font-reducer {
+  font-size: 1rem;
+}
+
 /* // Search  */
 .search-container {
   display: flex;
@@ -277,11 +301,29 @@
     display: block;
   }
 
+  .font-reducer {
+    overflow-x: scroll;
+  }
+  .search-cantrol {
+    display: none;
+  }
+  .description-mail-list {
+    display: none;
+  }
+  .bullet,
+  .star,
+  .starred {
+    display: none;
+  }
+
   .menu {
     position: absolute;
     top: 0px;
     max-height: 100vh;
     overflow-y: scroll;
+  }
+  .menu-disp {
+    display: none;
   }
   .mail-main {
     position: relative;

@@ -19,7 +19,9 @@ import docs from "../../Assets/document.png";
 import travel from "../../Assets/travel.png";
 import subs from "../../Assets/subs.png";
 import deals from "../../Assets/deals.png";
+import user from "../../Assets/user.png";
 import ComposeMail from "./ComposeMail/ComposeMail";
+import { useNavigate } from "react-router-dom";
 // image import end here
 
 const Home = () => {
@@ -30,6 +32,7 @@ const Home = () => {
   const [readmoode, setReadMode] = useState(false);
   const [isStarred, setIsStarred] = useState(false);
   const currentDate = new Date();
+  const navigate = useNavigate();
 
   // Function to format the time (hh:mm AM/PM)
   const formatTime = (date) => {
@@ -73,12 +76,18 @@ const Home = () => {
   const readmodeHandler = () => {
     setReadMode(false);
   };
+
+  const logoutHandler = () => {
+    localStorage.removeItem("idToken");
+    localStorage.removeItem("email");
+    navigate("/");
+  };
   return (
     <div>
       {/* Header Start here  */}
       <div className="container-fluid home-header-bg">
-        <header className="container pt-2 pb-2 row">
-          <div className="col-lg-3">
+        <header className="container-fluid pt-2 pb-2 align-items-center d-flex flex-row justify-content-between">
+          <div className="">
             <div className="text-light font-weight d-flex flex-row align-items-center">
               {/* Menu start here  */}
               <div
@@ -95,7 +104,7 @@ const Home = () => {
           </div>
 
           {/* Search container start here  */}
-          <div className="search-container col-lg-9">
+          <div className="search-cantrol w-100 ms-5 ms-5">
             <input
               type="text"
               class="search-input font-weight"
@@ -115,6 +124,16 @@ const Home = () => {
               </svg>
             </button>
           </div>
+
+          {/* added logout button  */}
+          <div className="">
+            {" "}
+            <button className="logout px-5 py-2" onClick={logoutHandler}>
+              LogOut
+            </button>
+          </div>
+          {/* added logout button  */}
+
           {/* Search container end here  */}
         </header>
       </div>
@@ -122,7 +141,13 @@ const Home = () => {
 
       <div className="container-fluid mail-main">
         <div className="row">
-          <section className="menu col-lg-2  col-md-12 p-3">
+          <section
+            className={
+              isMenuOpen
+                ? `menu col-lg-2  col-md-12 p-3 rad`
+                : `menu-disp menu col-lg-2  col-md-12 p-3 rad`
+            }
+          >
             {/* Compose Button start here */}
             <button
               className="compose font-weight text-light"
@@ -249,8 +274,8 @@ const Home = () => {
             {/* Accordian 2nd end here */}
           </section>
           {!readmoode && (
-            <section className="list col-lg-10 col-md-12">
-              <div className="mail-list-header d-flex align-items-center justify-content-between p-2 border-bottom">
+            <section className="bg-light list col-lg-10 col-md-12 rad">
+              <div className="mail-list-header d-flex align-items-center justify-content-between p-2 border-bottom overflow-x-auto">
                 <div>
                   <input
                     type="checkbox"
@@ -278,12 +303,12 @@ const Home = () => {
               <div className="mail-lists">
                 <ul>
                   <li
-                    className="font-weight d-flex align-items-center justify-content-between"
+                    className="font-weight d-flex align-items-center justify-content-between font-reducer"
                     onClick={readModeActivehandler}
                   >
                     <input type="checkbox" name="Select" id="Select" />
                     <span className="bullet"></span>
-                    <span> Mark Jukerburg</span>
+                    <span>Mark Jukerburg</span>
                     <span
                       className={isStarred ? "starred" : "star"}
                       title="Mark as starred"
@@ -308,7 +333,7 @@ const Home = () => {
             </section>
           )}
           {readmoode && (
-            <section className="list col-lg-10 col-md-12">
+            <section className="bg-light list col-lg-10 col-md-12">
               <div className="mail-list-header d-flex align-items-center justify-content-between p-2 border-bottom">
                 {/* icons start here */}
                 <div className="mail-readmode-header">
@@ -342,9 +367,9 @@ const Home = () => {
                 </div>
                 {/* icons end here */}
                 <div className="mail-readmode-header">
-                  <span>&#60;</span>
-                  <span>&#62;</span>
-                  <span> 1 0f 255 </span>
+                  <span title="Backward">&#60;</span>
+                  <span title="Forward">&#62;</span>
+                  <span title="Mail Count"> 1 0f 255 </span>
                 </div>
               </div>
               {/* Mail lists start here */}
@@ -364,7 +389,7 @@ const Home = () => {
                 </div>
 
                 <div className="mail-list-header p-3 font-weight d-flex flex-row justify-content-start">
-                  <span className="user-circle">User</span>
+                  <img src={user} alt="user image" className="user-img" />
                   <span className="w-100">
                     <div className="d-flex align-items-center justify-content-between">
                       <span>Google Accounts Team </span>

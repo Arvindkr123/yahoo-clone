@@ -4,6 +4,8 @@ import { ToastContainer, toast } from "react-toastify";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { EditorState, convertToRaw } from "draft-js";
+import { useDispatch } from "react-redux";
+import { addMail } from "../../../Store/mail-slice";
 
 const ComposeMail = (props) => {
   const [editorState, setEditorState] = useState(() =>
@@ -12,6 +14,7 @@ const ComposeMail = (props) => {
   const [vis, setVisible] = useState(false);
   const reciver = useRef();
   const subject = useRef();
+  const dispath = useDispatch();
   const onEditorStateChange = (newEditorState) => {
     setEditorState(newEditorState);
     if (editorState) {
@@ -40,6 +43,7 @@ const ComposeMail = (props) => {
     };
     console.log(mail);
     toast.success("Mail sent successfully");
+    dispath(addMail(mail));
     setEditorState("");
   };
   return (
