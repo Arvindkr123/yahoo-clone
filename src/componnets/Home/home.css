@@ -14,7 +14,7 @@
   border: none;
 }
 
-.logout:hover{
+.logout:hover {
   background-color: rgb(11, 55, 91);
   color: #fff;
 }
@@ -328,4 +328,12 @@
   .mail-main {
     position: relative;
   }
+}
+
+.sent-mail-count,
+.delete-mail-count,
+.inbox-mail-count {
+  padding-left: 10px;
+  border-radius: 5px;
+  color: rgb(226, 136, 136);
 }

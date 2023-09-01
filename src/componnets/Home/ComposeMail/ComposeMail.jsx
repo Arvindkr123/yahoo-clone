@@ -30,6 +30,7 @@ const ComposeMail = (props) => {
       .join("\n");
     let sender = localStorage.getItem("email");
     let mail = {
+      name: "unknown",
       sender,
       reciver: reciver.current.value,
       subject: subject.current.value,
