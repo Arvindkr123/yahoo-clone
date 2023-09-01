@@ -350,7 +350,9 @@ const Home = () => {
                         }}
                       >
                         <input type="checkbox" name="Select" id="Select" />
-                        <span className="bullet"></span>
+                        {!value.sent && !value.delete && (
+                          <span className="bullet"></span>
+                        )}
                         <span>{value.name}</span>
                         <span
                           className={isStarred ? "starred" : "star"}

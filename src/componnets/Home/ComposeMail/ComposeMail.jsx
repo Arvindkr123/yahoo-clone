@@ -42,11 +42,27 @@ const ComposeMail = (props) => {
       send: true,
       receive: false,
     };
-    console.log(mail);
-    toast.success("Mail sent successfully");
-    dispath(addMail(mail));
+    const url = process.env.REACT_APP_URL;
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(mail),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Mail stored in the firebase database");
+        toast.success("Mail sent su ccessfully");
+      })
+      .catch((error) => {
+        // Handle error if needed
+        console.error("Error storing mail in Firebase:", error);
+        toast.error("Failed to send mail. Please try again.");
+      });
     setEditorState("");
   };
+
   return (
     <div className="composer-backdrop">
       <div className="main-composer">
@@ -74,8 +90,13 @@ const ComposeMail = (props) => {
             className="w90"
             ref={reciver}
           />
-          <span>
-            <a href="#cc">CC</a> <a href="#BCC">BCC</a>
+          <span className="d-flex flex-row">
+            <a href="#cc" className="ms-2">
+              CC
+            </a>{" "}
+            <a className="ms-2" href="#BCC">
+              BCC
+            </a>
           </span>
         </div>
         <div className="d-flex align-items-center justify-content-between w-100  ps-3 pe-3 pt-2 pb-2  font-weight border-bottom">

@@ -1,29 +1,5 @@
 .home-header-bg {
-  background-color: blueviolet;
-}
-
-.user-img {
-  width: 50px;
-  border-radius: 25px;
-}
-
-.logout {
-  background-color: white;
-  font-weight: 500;
-  border-radius: 4px;
-  border: none;
-}
-
-.logout:hover {
-  background-color: rgb(11, 55, 91);
-  color: #fff;
-}
-.bg-light {
-  background-color: white !important;
-}
-
-.font-reducer {
-  font-size: 1rem;
+  background-color: #7859f9;
 }
 
 /* // Search  */
@@ -57,7 +33,7 @@
 }
 
 .search-button:hover {
-  background-color: #0056b3;
+  background-color: #9f95fc;
 }
 
 .search-container {
@@ -83,7 +59,7 @@
 }
 .compose {
   width: 100%;
-  background-color: #8a2be2;
+  background-color: #188fff;
   border-radius: 3px;
   padding: 10px 0px;
   border: none;
@@ -107,7 +83,7 @@
   border-radius: 3px;
 }
 .menu-list li:hover {
-  background-color: #8a2be2;
+  background-color: #b6d4fb;
 }
 .container {
   display: inline-block;
@@ -151,15 +127,15 @@
 }
 
 /* .active-accordian, .accordion:hover {
-    background-color: #ccc; 
-  } */
+  background-color: #ccc; 
+} */
 .accor-button {
   border-radius: 3px !important;
   padding: 10px 0px 10px 4px;
   width: 100%;
   text-align: left;
   border: none;
-  background-color: rgb(112, 51, 182);
+  background-color: #b6d4fb;
 }
 .panel {
   width: 100%;
@@ -169,6 +145,10 @@
 .img-style {
   width: 24px;
   border-radius: 2px;
+}
+.user-img {
+  width: 50px;
+  border-radius: 25px;
 }
 .shortcut span {
   margin: 0px 3px;
@@ -181,7 +161,7 @@
   transition: all 0.5s ease-in;
 }
 .shortcut span:hover {
-  background-color: rgb(112, 51, 182);
+  background-color: #b6d4fb;
   color: white;
 }
 .checkbox {
@@ -189,7 +169,7 @@
 }
 
 .list-active {
-  background-color: rgb(112, 51, 182);
+  background-color: #b6d4fb;
 }
 
 .mail-lists ul {
@@ -281,6 +261,16 @@
   min-height: 400px;
   overflow-y: scroll;
 }
+.logout {
+  background-color: white;
+  font-weight: 500;
+  padding: 5px 15px;
+  border-radius: 4px;
+  border: none;
+}
+.bg-light {
+  background-color: white !important;
+}
 .description-mail-list {
   display: inline-block;
   width: 150px; /* Adjust the width as needed */
@@ -295,12 +285,13 @@
   cursor: pointer;
   font-weight: 500;
 }
-
+.font-reducer {
+  font-size: 1rem;
+}
 @media (max-width: 768px) {
   .disp {
     display: block;
   }
-
   .font-reducer {
     overflow-x: scroll;
   }
@@ -329,7 +320,6 @@
     position: relative;
   }
 }
-
 .sent-mail-count,
 .delete-mail-count,
 .inbox-mail-count {
