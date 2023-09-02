@@ -73,6 +73,7 @@ const Home = () => {
   const toggleStar = () => {
     setIsStarred((prevIsStarred) => !prevIsStarred);
   };
+  const url = process.env.REACT_ONE_APP_URL;
   const readModeActivehandler = (value) => {
     setReadMode(true);
     setReadModeValue(value);
@@ -83,8 +84,6 @@ const Home = () => {
       read: true,
       unread: false,
     };
-
-    const url = process.env.REACT_ONE_APP_URL;
 
     if (value.sender !== localStorage.getItem("email")) {
       fetch(`${url}/${value.mailId}.json`, {
@@ -148,8 +147,24 @@ const Home = () => {
   };
 
   const deleteHandler = (value) => {
-    dispatch(removeMail(value));
-    toast.success("Deleted Successfully");
+    // dispatch(removeMail(value));
+    // toast.success("Deleted Successfully");
+    // setTemp([]);
+
+    fetch(`${url}/${value.mailId}.json`, {
+      method: "DELETE",
+    })
+      .then((response) => {
+        if (!response) {
+          throw new Error("Network error");
+        } else {
+          toast.success("Deleted successfully");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    setReadMode(false);
     setTemp([]);
   };
   return (
