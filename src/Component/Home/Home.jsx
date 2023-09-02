@@ -107,16 +107,13 @@ const Home = () => {
     };
     if (value.sender !== localStorage.getItem("email")) {
       setShowModal(true);
-      fetch(
-        `${url}/${value.mailId}.json`,
-        {
-          method: "PUT",
-          header: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(temp),
-        }
-      )
+      fetch(`${url}/${value.mailId}.json`, {
+        method: "PUT",
+        header: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(temp),
+      })
         .then((response) => {
           if (!response) {
             throw new Error("Unable to update the data");
@@ -139,12 +136,9 @@ const Home = () => {
   };
   const deleteHandler = (value) => {
     setShowModal(true);
-    fetch(
-      `${url}/${value.mailId}.json`,
-      {
-        method: "DELETE",
-      }
-    )
+    fetch(`${url}/${value.mailId}.json`, {
+      method: "DELETE",
+    })
       .then((response) => {
         if (!response) {
           throw new Error("Network error");
