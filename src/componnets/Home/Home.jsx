@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./home.css";
 // icons import here start
 // icons import here end
@@ -34,15 +34,21 @@ const Home = () => {
   const [isActive, setIsActive] = useState(false);
   const [readmoode, setReadMode] = useState(false);
   const [readModeValue, setReadModeValue] = useState("");
-  const [temp, setTemp] = useState([]);
+
   const [isStarred, setIsStarred] = useState(false);
 
   const sentMails = useSelector((state) => state.mail.sentMails);
   const allMails = useSelector((state) => state.mail.allMails);
   const deletedMails = useSelector((state) => state.mail.deleteMails);
+  const unreadMails = useSelector((state) => state.mail.unreadMails);
+  const [temp, setTemp] = useState([]);
   const dispatch = useDispatch();
   const currentDate = new Date();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setTemp(allMails);
+  }, [allMails]);
 
   // Function to format the time (hh:mm AM/PM)
   const formatTime = (date) => {
@@ -71,6 +77,36 @@ const Home = () => {
     setReadMode(true);
     setReadModeValue(value);
     console.log(value);
+
+    let temp = {
+      ...value,
+      read: true,
+      unread: false,
+    };
+
+    const url = process.env.REACT_APP_URL;
+
+    if (value.sender !== localStorage.getItem("email")) {
+      fetch(`${url}/${value.mailId}.json`, {
+        method: "PUT",
+        header: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(temp),
+      })
+        .then((response) => {
+          if (!response) {
+            throw new Error("Unable to update the data");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log(data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   const handleMenuClick = () => {
@@ -92,6 +128,8 @@ const Home = () => {
       case "Deleted Items":
         setTemp(deletedMails);
         break;
+      case "Unread":
+        setTemp(unreadMails);
       default:
         setTemp([]);
     }
@@ -205,7 +243,8 @@ const Home = () => {
                   className={activeListItem === "Unread" ? "list-active" : ""}
                   onClick={() => handleItemClick("Unread")}
                 >
-                  Unread
+                  Unread{" "}
+                  <span className="inbox-mail-count">{unreadMails.length}</span>
                 </li>
                 <li
                   className={activeListItem === "Starred" ? "list-active" : ""}
@@ -439,10 +478,10 @@ const Home = () => {
                   <img src={user} alt="user image" className="user-img" />
                   <span className="w-100">
                     <div className="d-flex align-items-center justify-content-between">
-                      <span>Google Accounts Team </span>
+                      <span className="ms-2"> Elon Musk </span>
                       <span> {readModeValue.time} </span>
                     </div>
-                    <span>to me</span>
+                    <span className="ms-2">to me</span>
                   </span>
                 </div>
 

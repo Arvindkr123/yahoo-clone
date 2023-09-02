@@ -10,10 +10,14 @@ const mailSlice = createSlice({
   },
   reducers: {
     addMail(state, action) {
-      state.sentMails.push({
-        ...action.payload,
-        sentid: "SENT0" + state.sentMails.length,
-      });
+      if (action.payload.sender === localStorage.getItem("email")) {
+        state.sentMails.push({ ...action.payload });
+      } else {
+        if (!action.payload.read) {
+          state.unreadMails.push({ ...action.payload });
+        }
+        state.allMails.push({ ...action.payload });
+      }
     },
     removeMail(state, action) {
       state.deleteMails.push({
