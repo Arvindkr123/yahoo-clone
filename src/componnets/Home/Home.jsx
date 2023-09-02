@@ -84,7 +84,7 @@ const Home = () => {
       unread: false,
     };
 
-    const url = process.env.REACT_APP_URL;
+    const url = process.env.REACT_ONE_APP_URL;
 
     if (value.sender !== localStorage.getItem("email")) {
       fetch(`${url}/${value.mailId}.json`, {
@@ -389,7 +389,7 @@ const Home = () => {
                         }}
                       >
                         <input type="checkbox" name="Select" id="Select" />
-                        {!value.sent && !value.delete && (
+                        {!value.delete && !value.read && (
                           <span className="bullet"></span>
                         )}
                         <span>{value.name}</span>
