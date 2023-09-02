@@ -1,18 +1,16 @@
-import React, { useEffect, useRef } from "react";
-import { Route, Routes } from "react-router";
-import Home from "./componnets/Home/Home";
-import Auth from "./componnets/Auth/Auth";
+import Auth from "./Component/Auth/Auth";
+import { Routes, Route } from "react-router-dom";
+import Home from "./Component/Home/Home";
+import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
-import { addMail } from "./Store/mail-slice";
-
-const App = () => {
-  const isInitialRef = useRef();
+import { mailAction } from "./Store/mail-slice";
+function App() {
+  const isInitialRef = useRef(true);
   const dispatch = useDispatch();
-
+  const url = process.env.REACT_APP_URL;
   useEffect(() => {
     if (isInitialRef.current) {
       isInitialRef.current = false;
-      const url = process.env.REACT_APP_URL;
       fetch(url)
         .then((response) => {
           if (!response) {
@@ -31,7 +29,7 @@ const App = () => {
                 temp.sender === localStorage.getItem("email") ||
                 temp.reciver === localStorage.getItem("email")
               ) {
-                dispatch(addMail(temp));
+                dispatch(mailAction.addMail(temp));
               }
             });
           }
@@ -41,13 +39,12 @@ const App = () => {
         });
       return;
     }
-  }, []);
+  }, [dispatch]);
   return (
     <Routes>
       <Route path="/" element={<Auth />} />
-      <Route path="/home" element={<Home />} />
+      <Route path="/Home" element={<Home />} />
     </Routes>
   );
-};
-
+}
 export default App;

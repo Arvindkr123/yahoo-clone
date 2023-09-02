@@ -4,8 +4,8 @@ import { ToastContainer, toast } from "react-toastify";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { EditorState, convertToRaw } from "draft-js";
+import { mailAction } from "../../../Store/mail-slice";
 import { useDispatch } from "react-redux";
-import { addMail } from "../../../Store/mail-slice";
 
 const ComposeMail = (props) => {
   const [editorState, setEditorState] = useState(() =>
@@ -14,13 +14,15 @@ const ComposeMail = (props) => {
   const [vis, setVisible] = useState(false);
   const reciver = useRef();
   const subject = useRef();
-  const dispath = useDispatch();
+  const dispatch = useDispatch();
   const onEditorStateChange = (newEditorState) => {
     setEditorState(newEditorState);
     if (editorState) {
       setVisible(true);
     }
   };
+
+  const url = process.env.REACT_APP_URL;
   const mailHandler = () => {
     const contentState = editorState.getCurrentContent();
     const rawContentState = convertToRaw(contentState);
@@ -41,7 +43,7 @@ const ComposeMail = (props) => {
       send: true,
       receive: false,
     };
-    const url = process.env.REACT_APP_URL;
+
     fetch(url, {
       method: "POST",
       headers: {
@@ -51,9 +53,10 @@ const ComposeMail = (props) => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("Mail stored in the firebase database");
+        // Handle success if needed
+        console.log("Mail stored in Firebase:", data);
+        dispatch(mailAction.addMail(mail));
         toast.success("Mail sent successfully");
-        dispath(addMail(mail));
       })
       .catch((error) => {
         // Handle error if needed
@@ -94,7 +97,7 @@ const ComposeMail = (props) => {
             <a href="#cc" className="ms-2">
               CC
             </a>{" "}
-            <a className="ms-2" href="#BCC">
+            <a href="#BCC" className="ms-2">
               BCC
             </a>
           </span>

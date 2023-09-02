@@ -1,17 +1,18 @@
-import React, { useRef, useState } from "react";
-import "./login.css";
-import { Button, Card, Form } from "react-bootstrap";
+import React, { useState } from "react";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+import Card from "react-bootstrap/Card";
+import "./Login.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from "react-router-dom";
+import { useRef } from "react";
+import { useNavigate } from "react-router";
 
-const Login = (props) => {
+export default function Login(props) {
   const navigate = useNavigate();
   const inputEmail = useRef();
   const inputPass = useRef();
   const [showPassword, setShowPassword] = useState(false);
-  const apiKey = process.env.REACT_APP_API_KEY;
-  let url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`;
 
   const Loginhandler = async (e) => {
     e.preventDefault();
@@ -20,6 +21,8 @@ const Login = (props) => {
       email: inputEmail.current.value,
       password: inputPass.current.value,
     };
+    const apikey = process.env.REACT_APP_API_KEY;
+    let url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apikey}`;
     if (
       inputPass.current.value !== "" &&
       inputEmail.current.value.indexOf("@")
@@ -38,6 +41,7 @@ const Login = (props) => {
           localStorage.setItem("idToken", data.idToken);
           localStorage.setItem("email", data.email);
           toast.success("Logged in successfully");
+          navigate("/Home");
         } else {
           const errorData = await response.json();
           console.log("Failed to login:", errorData);
@@ -52,8 +56,8 @@ const Login = (props) => {
       props.showModal(false);
     }
     props.showModal(false);
-    navigate("/home");
   };
+
   return (
     <div>
       <Card className="p-4 Login-bg">
@@ -105,6 +109,4 @@ const Login = (props) => {
       <ToastContainer />
     </div>
   );
-};
-
-export default Login;
+}

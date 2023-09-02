@@ -1,55 +1,49 @@
 import React, { useEffect, useState } from "react";
-import "./home.css";
-// icons import here start
-// icons import here end
+import "./Home.css";
 import { FcUpLeft } from "react-icons/fc";
 import { RiSpam2Line, RiMessage2Fill } from "react-icons/ri";
 import { BiArchiveIn } from "react-icons/bi";
 import { FiMoreVertical } from "react-icons/fi";
 import { GoMoveToEnd } from "react-icons/go";
 import { MdOutlineAddTask } from "react-icons/md";
+import { AiOutlineStar } from "react-icons/ai";
 import { FaOpencart } from "react-icons/fa";
 import { AiFillDelete, AiOutlineClockCircle } from "react-icons/ai";
-// icons import here start
-// image import start here
-import view from "../../Assets/view.png";
 import folder from "../../Assets/folder.png";
 import photos from "../../Assets/photos.png";
 import docs from "../../Assets/document.png";
 import travel from "../../Assets/travel.png";
 import subs from "../../Assets/subs.png";
 import deals from "../../Assets/deals.png";
+import view from "../../Assets/view.png";
 import user from "../../Assets/user.png";
+import pick from "../../Assets/no mails.png";
 import ComposeMail from "./ComposeMail/ComposeMail";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { removeMail } from "../../Store/mail-slice";
+import { useNavigate } from "react-router";
+import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-// image import end here
 
 const Home = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [iscompose, setCompose] = useState(false);
-  const [activeListItem, setActiveListItem] = useState("Inbox");
   const [isActive, setIsActive] = useState(false);
+  const [activeListItem, setActiveListItem] = useState("Inbox");
+  const [iscompose, setCompose] = useState(false);
   const [readmoode, setReadMode] = useState(false);
-  const [readModeValue, setReadModeValue] = useState("");
-
-  const [isStarred, setIsStarred] = useState(false);
-
+  const [readmoodeValue, setReadModeValue] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const currentDate = new Date();
   const sentMails = useSelector((state) => state.mail.sentMails);
   const allMails = useSelector((state) => state.mail.allMails);
-  const deletedMails = useSelector((state) => state.mail.deleteMails);
   const unreadMails = useSelector((state) => state.mail.unreadMails);
+  const deletedMails = useSelector((state) => state.mail.deletedMails);
   const [temp, setTemp] = useState([]);
-  const dispatch = useDispatch();
-  const currentDate = new Date();
-  const navigate = useNavigate();
-
   useEffect(() => {
     setTemp(allMails);
   }, [allMails]);
-
+  const navigate = useNavigate();
+  const composehandle = (value) => {
+    setCompose(value);
+  };
   // Function to format the time (hh:mm AM/PM)
   const formatTime = (date) => {
     const hours = date.getHours();
@@ -70,22 +64,49 @@ const Home = () => {
   const formattedTime = formatTime(currentDate);
   const formattedDate = formatDate(currentDate);
 
-  const toggleStar = () => {
-    setIsStarred((prevIsStarred) => !prevIsStarred);
+  const handleItemClick = (item) => {
+    setActiveListItem(item);
+    setReadMode(false);
+    switch (item) {
+      case "Inbox":
+        setTemp(allMails);
+
+        break;
+      case "Sent":
+        setTemp(sentMails);
+
+        break;
+      case "Deleted Items":
+        setTemp(deletedMails);
+        break;
+      case "Unread":
+        setTemp(unreadMails);
+        break;
+      default:
+        setTemp([]);
+    }
+  };
+
+  const toggleAccordion = () => {
+    setIsActive((prevState) => !prevState);
+  };
+  const handleMenuClick = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+  const readmodeHandler = () => {
+    setReadMode(false);
   };
   const url = process.env.REACT_ONE_APP_URL;
   const readModeActivehandler = (value) => {
     setReadMode(true);
     setReadModeValue(value);
-    console.log(value);
-
     let temp = {
       ...value,
       read: true,
       unread: false,
     };
-
     if (value.sender !== localStorage.getItem("email")) {
+      setShowModal(true);
       fetch(`${url}/${value.mailId}.json`, {
         method: "PUT",
         header: {
@@ -105,52 +126,16 @@ const Home = () => {
         .catch((error) => {
           console.log(error);
         });
+      setShowModal(false);
     }
   };
-
-  const handleMenuClick = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-  const composehandle = (value) => {
-    setCompose(value);
-  };
-  const handleItemClick = (item) => {
-    setActiveListItem(item);
-    setReadMode(false);
-    switch (item) {
-      case "Inbox":
-        setTemp(allMails);
-        break;
-      case "Sent":
-        setTemp(sentMails);
-        break;
-      case "Deleted Items":
-        setTemp(deletedMails);
-        break;
-      case "Unread":
-        setTemp(unreadMails);
-      default:
-        setTemp([]);
-    }
-  };
-  const toggleAccordion = () => {
-    setIsActive((prevState) => !prevState);
-  };
-  const readmodeHandler = () => {
-    setReadMode(false);
-  };
-
   const logoutHandler = () => {
     localStorage.removeItem("idToken");
     localStorage.removeItem("email");
     navigate("/");
   };
-
   const deleteHandler = (value) => {
-    // dispatch(removeMail(value));
-    // toast.success("Deleted Successfully");
-    // setTemp([]);
-
+    setShowModal(true);
     fetch(`${url}/${value.mailId}.json`, {
       method: "DELETE",
     })
@@ -164,17 +149,16 @@ const Home = () => {
       .catch((error) => {
         console.log(error);
       });
+    setShowModal(false);
     setReadMode(false);
     setTemp([]);
   };
   return (
     <div>
-      {/* Header Start here  */}
       <div className="container-fluid home-header-bg">
         <header className="container-fluid pt-2 pb-2 align-items-center d-flex flex-row justify-content-between">
           <div className="">
-            <div className="text-light font-weight d-flex flex-row align-items-center">
-              {/* Menu start here  */}
+            <div className="text-light font-weight d-flex flex-row align-items-center ">
               <div
                 className={isMenuOpen ? "change  ms-s me-3" : "disp ms-s me-3"}
                 onClick={handleMenuClick}
@@ -182,14 +166,11 @@ const Home = () => {
                 <div className="bar1"></div>
                 <div className="bar2"></div>
                 <div className="bar3"></div>
-              </div>
-              {/* Menu start here  */}
-              <h1> Yahoo!!</h1>
-            </div>
+              </div>{" "}
+              <h1> Yahoo!!</h1>{" "}
+            </div>{" "}
           </div>
-
-          {/* Search container start here  */}
-          <div className="search-cantrol w-100 ms-5 ms-5">
+          <div class="search-cantrol w-100 ms-5 ms-5">
             <input
               type="text"
               class="search-input font-weight"
@@ -209,31 +190,24 @@ const Home = () => {
               </svg>
             </button>
           </div>
-
-          {/* added logout button  */}
           <div className="">
             {" "}
-            <button className="logout px-5 py-2" onClick={logoutHandler}>
-              LogOut
+            <button className="logout" onClick={logoutHandler}>
+              Log out
             </button>
           </div>
-          {/* added logout button  */}
-
-          {/* Search container end here  */}
         </header>
       </div>
-      {/* Header End here  */}
-
+      {/* Header  */}
       <div className="container-fluid mail-main">
         <div className="row">
           <section
             className={
               isMenuOpen
-                ? `menu col-lg-2  col-md-12 p-3 rad`
-                : `menu-disp menu col-lg-2  col-md-12 p-3 rad`
+                ? "menu col-lg-2  col-md-12 p-3 rad"
+                : "menu-disp menu col-lg-2  col-md-12 p-3 rad"
             }
           >
-            {/* Compose Button start here */}
             <button
               className="compose font-weight text-light"
               onClick={() => {
@@ -242,9 +216,6 @@ const Home = () => {
             >
               Compose mail
             </button>
-            {/* Compose Button end here */}
-
-            {/* Inbox list start here */}
             <div class="inbox-list">
               <ul className="menu-list font-weight mt-1">
                 <li
@@ -252,13 +223,13 @@ const Home = () => {
                   onClick={() => handleItemClick("Inbox")}
                 >
                   Inbox{" "}
-                  <span className="inbox-mail-count">{allMails?.length}</span>
+                  <span className="inbox-mail-count">{allMails.length}</span>
                 </li>
                 <li
                   className={activeListItem === "Unread" ? "list-active" : ""}
                   onClick={() => handleItemClick("Unread")}
                 >
-                  Unread{" "}
+                  Unread
                   <span className="inbox-mail-count">{unreadMails.length}</span>
                 </li>
                 <li
@@ -278,7 +249,7 @@ const Home = () => {
                   onClick={() => handleItemClick("Sent")}
                 >
                   Sent{" "}
-                  <span className="sent-mail-count">{sentMails?.length}</span>
+                  <span className="sent-mail-count">{sentMails.length}</span>
                 </li>
                 <li
                   className={activeListItem === "Spam" ? "list-active" : ""}
@@ -294,14 +265,12 @@ const Home = () => {
                 >
                   Deleted Items{" "}
                   <span className="delete-mail-count">
-                    {deletedMails?.length}
+                    {deletedMails.length}
                   </span>
                 </li>
               </ul>
             </div>
-            {/* Inbox list end here */}
-
-            {/* Accordian 1st start here */}
+            {/* Accordian  */}
             <div
               className={`accordion ${isActive ? "active" : ""}`}
               onClick={toggleAccordion}
@@ -342,9 +311,8 @@ const Home = () => {
                 </ul>
               </div>
             </div>
-            {/* Accordian 1st end here */}
 
-            {/* Accordian 2nd start here */}
+            {/* 2nd accordian  */}
             <div
               className={`accordion ${isActive ? "active" : ""}`}
               onClick={toggleAccordion}
@@ -362,11 +330,10 @@ const Home = () => {
                 </ul>
               </div>
             </div>
-            {/* Accordian 2nd end here */}
           </section>
           {!readmoode && (
             <section className="bg-light list col-lg-10 col-md-12 rad">
-              <div className="mail-list-header d-flex align-items-center justify-content-between p-2 border-bottom overflow-x-auto">
+              <div className="mail-list-header d-flex align-items-center justify-content-between pt-1 pb-1 border-bottom overflow-x-auto">
                 <div>
                   <input
                     type="checkbox"
@@ -389,11 +356,13 @@ const Home = () => {
                   </select>
                 </div>
               </div>
-
-              {/* Mail Lists start  */}
+              {/* Mail Listes   the main mail */}
               <div className="mail-lists">
                 {temp.length === 0 ? (
-                  <h3>No Mails Available</h3>
+                  <div className="d-flex justify-content-center align-items-center flex-column">
+                    <img src={pick} alt="picka" className="img-picka" />
+                    <h3> No {activeListItem} mail available</h3>
+                  </div>
                 ) : (
                   <ul>
                     {temp.map((value) => (
@@ -408,11 +377,7 @@ const Home = () => {
                           <span className="bullet"></span>
                         )}
                         <span>{value.name}</span>
-                        <span
-                          className={isStarred ? "starred" : "star"}
-                          title="Mark as starred"
-                          onClick={toggleStar}
-                        ></span>
+                        <AiOutlineStar />
                         <span className="title-mail-list">{value.subject}</span>
                         <span className="description-mail-list">
                           {value.mail}
@@ -426,87 +391,89 @@ const Home = () => {
                   </ul>
                 )}
               </div>
-              {/* Mail Lists end */}
             </section>
           )}
           {readmoode && (
             <section className="bg-light list col-lg-10 col-md-12">
-              <div className="mail-list-header d-flex align-items-center justify-content-between p-2 border-bottom">
-                {/* icons start here */}
+              <div className="mail-list-header d-flex align-items-center justify-content-between p-2 border-bottom ">
                 <div className="mail-readmode-header">
-                  <span onClick={readmodeHandler}>
-                    <FcUpLeft />
+                  <span onClick={readmodeHandler} title="Back">
+                    <FcUpLeft size="1.3rem" />
                   </span>
-                  <span>
-                    <BiArchiveIn />
+                  <span title="Archive">
+                    <BiArchiveIn size="1.3rem" />
                   </span>
-                  <span>
-                    <RiSpam2Line />
+                  <span title="Spam">
+                    <RiSpam2Line size="1.3rem" />
                   </span>
                   <span
                     onClick={() => {
-                      deleteHandler(readModeValue);
+                      deleteHandler(readmoodeValue);
                     }}
+                    title="Delete"
                   >
-                    <AiFillDelete />
+                    <AiFillDelete size="1.3rem" />
                   </span>
-                  <span>
-                    <RiMessage2Fill />
+                  <span title="Message">
+                    <RiMessage2Fill size="1.3rem" />
                   </span>
-                  <span>
-                    <AiOutlineClockCircle />
+                  <span title="Click">
+                    <AiOutlineClockCircle size="1.3rem" />
                   </span>
-                  <span>
-                    <MdOutlineAddTask />
+                  <span title="Add to task">
+                    <MdOutlineAddTask size="1.3rem" />
                   </span>
-                  <span>
-                    <GoMoveToEnd />
+                  <span title="Move to End">
+                    <GoMoveToEnd size="1.3rem" />
                   </span>
-                  <span>
-                    <FiMoreVertical />
+                  <span title="More...">
+                    <FiMoreVertical size="1.3rem" />
                   </span>
                 </div>
-                {/* icons end here */}
+
                 <div className="mail-readmode-header">
                   <span title="Backward">&#60;</span>
                   <span title="Forward">&#62;</span>
-                  <span title="Mail Count"> 1 0f {temp.length}</span>
+                  <span title="Mail Count">1 of {temp.length}</span>
                 </div>
               </div>
-              {/* Mail lists start here */}
+              {/* Mail Listes   the main mail */}
               <div className="mail-readMod-container">
                 <div className="mail-list-header d-flex align-items-center justify-content-between p-2 border-bottom">
                   <div className="mail-readmode-header">
-                    <span title="Subject of mail">{readModeValue.subject}</span>
+                    <span title="Subject of mail">
+                      {readmoodeValue.subject}
+                    </span>
                     <span className="important-mail">important</span>
                     <span>inbox</span>
                   </div>
+
                   <div className="mail-readmode-header">
                     <span title="Print">Print</span>
                     <span title="open in new window">
-                      <FaOpencart />
+                      <FaOpencart size="1.3rem" />
                     </span>
                   </div>
                 </div>
 
                 <div className="mail-list-header p-3 font-weight d-flex flex-row justify-content-start">
-                  <img src={user} alt="user image" className="user-img" />
+                  <img src={user} alt="xyz-damaged" className="user-img" />
+
                   <span className="w-100">
                     <div className="d-flex align-items-center justify-content-between">
-                      <span className="ms-2"> Elon Musk </span>
-                      <span> {readModeValue.time} </span>
+                      <span className=" ms-2">Elon Musk</span>
+                      <span> {readmoodeValue.time} </span>
                     </div>
-                    <span className="ms-2">to me</span>
+                    <span className=" ms-2">to me</span>
                   </span>
                 </div>
 
-                <div className="message-container">{readModeValue.mail}</div>
+                <div className="message-container">{readmoodeValue.mail}</div>
               </div>
               <div className="reply-btn p-3">
                 <button className="btn btn-primary ms-3">Reply</button>
                 <button className="btn btn-primary ms-3">Forward</button>
               </div>
-              {/* Mail lists end here */}
             </section>
           )}
         </div>
@@ -516,6 +483,11 @@ const Home = () => {
           onClick={composehandle}
           time={formattedDate + " " + formattedTime}
         />
+      )}
+      {showModal && (
+        <div className="Auth-load-modal">
+          <div class="Auth-loader"></div>
+        </div>
       )}
     </div>
   );
